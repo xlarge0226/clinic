@@ -4,13 +4,18 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="暖心堂預約">
+<meta name="apple-mobile-web-app-title" content="暖心堂中醫">
+<link id="app-icon" rel="apple-touch-icon" href="">
+<link id="fav-icon" rel="icon" type="image/png" href="">
 <title>暖心堂中醫診所｜線上預約</title>
 <style>
 :root{--p:#8c6239;--pb:#fdf8f3;--a:#2e6f40;--ab:#f2f9f4;--bg:#faf9f6;--c:#fff;--t:#2c2520;--m:#786c63;--bd:#e6dfd7}
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--t);padding-bottom:90px}
-.header{background:var(--c);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:10;font-size:18px;font-weight:700;color:var(--p)}
+body{background:var(--bg);color:var(--t);padding-bottom:40px}
+.header{background:var(--c);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--bd);font-size:18px;font-weight:700;color:var(--p)}
+.top-tabs{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);display:flex;border-bottom:1px solid var(--bd);padding:0 10px;overflow-x:auto}
+.tab-btn{flex:1;background:transparent;border:none;border-bottom:3px solid transparent;color:var(--m);padding:12px 8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
+.tab-btn.active{color:var(--p);border-bottom-color:var(--p)}
 .wrap{max-width:480px;margin:0 auto;padding:18px}
 .view{display:none}.view.active{display:block}
 .hero-btn{background:var(--c);border:1.5px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(140,98,57,.05)}
@@ -31,6 +36,9 @@ body{background:var(--bg);color:var(--t);padding-bottom:90px}
 .vtype.on{background:var(--pb);border-color:var(--p);color:var(--p)}
 .is-acu .vtype.on{background:var(--ab);border-color:var(--a);color:var(--a)}
 .inp{width:100%;padding:12px;border:1.5px solid var(--bd);border-radius:10px;font-size:16px;margin-bottom:14px;background:#fff}
+.search-box{position:relative;margin-bottom:14px}
+.search-inp{width:100%;padding:11px 14px 11px 36px;border:1.5px solid var(--p);border-radius:12px;font-size:15px;background:#fff;outline:none}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--p)}
 .main-btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:17px;font-weight:700;color:#fff;background:var(--p);cursor:pointer}
 .is-acu .main-btn{background:var(--a)}.main-btn:disabled{background:#d6cfc7;cursor:not-allowed}
 .ok-circle{width:56px;height:56px;background:#dcfce7;color:#15803d;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;font-weight:700}
@@ -47,9 +55,6 @@ body{background:var(--bg);color:var(--t);padding-bottom:90px}
 .srv-item{padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;line-height:1.65}
 .srv-item:last-child{border-bottom:none;padding-bottom:0}
 .srv-cat{font-weight:700;color:var(--a);font-size:15px;margin-bottom:3px}
-.tab-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(44,37,32,.94);padding:5px;border-radius:999px;display:flex;gap:4px;z-index:99;box-shadow:0 6px 18px rgba(0,0,0,.2)}
-.tab-btn{background:transparent;border:none;color:#b8aea6;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
-.tab-btn.active{background:#fff;color:var(--t)}
 </style>
 </head>
 <body>
@@ -167,13 +172,23 @@ body{background:var(--bg);color:var(--t);padding-bottom:90px}
   <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📋 預約紀錄</button>
 </div>
 <script>
+(function(){
+  const cv=document.createElement('canvas');cv.width=180;cv.height=180;const ctx=cv.getContext('2d');
+  ctx.fillStyle='#fdf8f3';ctx.fillRect(0,0,180,180);
+  const svg=document.querySelector('.header svg');
+  if(svg){const img=new Image();const xml=new XMLSerializer().serializeToString(svg);
+    img.onload=()=>{ctx.drawImage(img,25,25,130,130);const url=cv.toDataURL('image/png');
+      document.getElementById('app-icon').href=url;document.getElementById('fav-icon').href=url;};
+    img.src='data:image/svg+xml;base64,'+btoa(unescape(encodeURIComponent(xml)));}
+})();
 const LIMIT_CLINIC=2,LIMIT_ACU=3;
 let cur={type:'',date:'',day:0,slot:'',vtype:'複診'};
 const slotsFull=['08:30','09:00','09:30','10:00','10:30','11:00','11:30','15:30','16:00','16:30','17:00','17:30','18:00'];
 const slotsThu=['15:30','16:00','16:30','17:00','17:30','18:00'];
 function getRs(){return JSON.parse(localStorage.getItem('nxt_records')||'[]')}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
-function switchTab(t){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(t==='home'){document.getElementById('tab-home').classList.add('active');showView('v-home')}else if(t==='info'){document.getElementById('tab-info').classList.add('active');showView('v-info')}else{document.getElementById('tab-records').classList.add('active');renderRec();showView('v-records')}}
+function switchTab(t){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));location.hash=t;if(t==='home'){document.getElementById('tab-home').classList.add('active');showView('v-home')}else if(t==='info'){document.getElementById('tab-info').classList.add('active');showView('v-info')}else{document.getElementById('tab-records').classList.add('active');renderRec();showView('v-records')}}
+function filterInfo(){const kw=document.getElementById('kw-search').value.trim().toLowerCase();const doc=document.getElementById('card-doc'),srv=document.getElementById('card-srv'),items=document.querySelectorAll('.filter-item');if(!kw){doc.style.display='block';srv.style.display='block';items.forEach(i=>i.style.display='block');document.getElementById('no-match').style.display='none';return}doc.style.display=doc.innerText.toLowerCase().includes(kw)?'block':'none';let anySrv=false;items.forEach(i=>{const ok=i.innerText.toLowerCase().includes(kw);i.style.display=ok?'block':'none';if(ok)anySrv=true});srv.style.display=anySrv?'block':'none';document.getElementById('no-match').style.display=(doc.style.display==='none'&&!anySrv)?'block':'none'}
 function setVt(v){cur.vtype=v;document.getElementById('vt-re').classList.toggle('on',v==='複診');document.getElementById('vt-first').classList.toggle('on',v==='初診')}
 function openCal(t){cur={type:t,date:'',day:0,slot:'',vtype:'複診'};setVt('複診');const w=document.getElementById('app-wrap');w.classList.toggle('is-acu',t==='acu');document.getElementById('t-cal').innerText=t==='acu'?'針灸日曆':'看診日曆';document.getElementById('box-slot').style.display='none';document.getElementById('btn-next').disabled=true;const g=document.getElementById('g-date');g.innerHTML='';const ds=['日','一','二','三','四','五','六'];let c=0,o=0;while(c<9){const d=new Date();d.setDate(d.getDate()+o++);const wd=d.getDay();if(wd===0||wd===6)continue;const l=`${d.getMonth()+1}/${d.getDate()} (${ds[wd]})`;const b=document.createElement('div');b.className='chip';b.innerText=l;b.onclick=()=>{document.querySelectorAll('#g-date .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');cur.date=l;cur.day=wd;cur.slot='';document.getElementById('btn-next').disabled=true;renderSlots()};g.appendChild(b);c++}showView('v-cal')}
 function renderSlots(){const gs=document.getElementById('g-slot');gs.innerHTML='';const rs=getRs(),lim=cur.type==='acu'?LIMIT_ACU:LIMIT_CLINIC;const list=cur.day===4?slotsThu:slotsFull;list.forEach(s=>{const cnt=rs.filter(r=>r.type===cur.type&&r.date===cur.date&&r.slot===s).length;const isFull=cnt>=lim;const sb=document.createElement('div');sb.className='chip'+(isFull?' full':'');sb.innerText=isFull?`${s} (已額滿)`:s;if(!isFull){sb.onclick=()=>{document.querySelectorAll('#g-slot .chip').forEach(x=>x.classList.remove('on'));sb.classList.add('on');cur.slot=s;document.getElementById('btn-next').disabled=false}}gs.appendChild(sb)});document.getElementById('box-slot').style.display='block'}
@@ -181,6 +196,7 @@ function goForm(){if(!cur.date||!cur.slot)return;document.getElementById('banner
 function done(){const n=document.getElementById('f-name').value.trim(),p=document.getElementById('f-phone').value.trim(),nt=document.getElementById('f-note').value.trim();if(!n||!p)return alert('請填寫姓名與聯絡電話');const r={id:Date.now(),type:cur.type,tn:cur.type==='acu'?'針灸時段預約':'一般看診掛號',vtype:cur.vtype,date:cur.date,slot:cur.slot,name:n,phone:p,note:cur.type==='acu'?'':nt};const rs=getRs();rs.unshift(r);localStorage.setItem('nxt_records',JSON.stringify(rs));document.getElementById('t-ok').innerText=cur.type==='acu'?'針灸預約成功！':'看診掛號成功！';document.getElementById('ok-detail').innerHTML=`<div><b>診所：</b>暖心堂中醫診所</div><div><b>項目：</b>${r.tn}（${r.vtype}）</div><div><b>時間：</b>${r.date} ${r.slot}</div><div><b>姓名：</b>${r.name}</div><div><b>電話：</b>${r.phone}</div>${r.note?`<div><b>主訴：</b>${r.note}</div>`:''}`;document.getElementById('f-name').value='';document.getElementById('f-phone').value='';document.getElementById('f-note').value='';showView('v-ok')}
 function renderRec(){const el=document.getElementById('list-rec'),rs=getRs();if(!rs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--m);padding:30px">目前尚無任何預約紀錄</div>';return}el.innerHTML=rs.map(r=>`<div class="rec-card"><button class="del-btn" onclick="delRec(${r.id})">取消</button><div style="margin-bottom:6px"><span class="tag ${r.type==='acu'?'a':'c'}">${r.tn}</span><span class="tag v">${r.vtype||'複診'}</span><b>${r.date} ${r.slot}</b></div><div>預約人：${r.name}（${r.phone}）</div>${r.note?`<div style="color:var(--m);font-size:13px;margin-top:4px">主訴：${r.note}</div>`:''}</div>`).join('')}
 function delRec(id){if(!confirm('確定要取消這筆預約嗎？'))return;localStorage.setItem('nxt_records',JSON.stringify(getRs().filter(r=>r.id!==id)));renderRec()}
+if(location.hash==='#info')switchTab('info');else if(location.hash==='#records')switchTab('records');
 </script>
 </body>
 </html>
