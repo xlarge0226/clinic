@@ -3,52 +3,76 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>診所看診與針灸預約</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="暖心堂預約">
+<title>暖心堂中醫診所｜線上預約</title>
 <style>
-:root{--p:#1d4ed8;--pb:#eff6ff;--a:#047857;--ab:#ecfdf5;--bg:#f8fafc;--c:#fff;--t:#0f172a;--m:#64748b;--bd:#e2e8f0}
-*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,sans-serif;-webkit-tap-highlight-color:transparent}
+:root{--p:#8c6239;--pb:#fdf8f3;--a:#2e6f40;--ab:#f2f9f4;--bg:#faf9f6;--c:#fff;--t:#2c2520;--m:#786c63;--bd:#e6dfd7}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--t);padding-bottom:90px}
-.header{background:var(--c);padding:16px;text-align:center;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:10;font-size:18px;font-weight:700}
+.header{background:var(--c);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:10;font-size:18px;font-weight:700;color:var(--p)}
 .wrap{max-width:480px;margin:0 auto;padding:18px}
 .view{display:none}.view.active{display:block}
-.hero-btn{background:var(--c);border:1.5px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.hero-btn{background:var(--c);border:1.5px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(140,98,57,.05)}
 .hero-btn.c{border-left:6px solid var(--p)}.hero-btn.a{border-left:6px solid var(--a)}
 .hero-title{font-size:20px;font-weight:700;margin-bottom:4px}.hero-sub{font-size:13px;color:var(--m)}
 .card{background:var(--c);border:1px solid var(--bd);border-radius:16px;padding:18px;margin-bottom:14px}
 .top-bar{display:flex;align-items:center;margin-bottom:14px}
-.back-btn{background:#e2e8f0;border:none;padding:7px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#334155}
+.back-btn{background:#efeae4;border:none;padding:7px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#4a3f37;cursor:pointer}
 .step-title{font-size:18px;font-weight:700;margin-left:10px}
-.lbl{font-size:14px;font-weight:700;margin-bottom:10px;display:block;color:#334155}
+.lbl{font-size:14px;font-weight:700;margin-bottom:8px;display:block;color:#4a3f37}
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.chip{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px 6px;text-align:center;font-size:15px;font-weight:600;cursor:pointer}
+.chip{background:#fff;border:1.5px solid var(--bd);border-radius:12px;padding:12px 6px;text-align:center;font-size:14px;font-weight:600;cursor:pointer}
 .chip.on{background:var(--pb);border-color:var(--p);color:var(--p)}
 .is-acu .chip.on{background:var(--ab);border-color:var(--a);color:var(--a)}
-.inp{width:100%;padding:13px;border:1.5px solid var(--bd);border-radius:10px;font-size:16px;margin-bottom:14px}
+.chip.full{background:#f1efec;border-color:#e2ddd7;color:#a8a098;cursor:not-allowed;text-decoration:line-through}
+.vtype-box{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.vtype{border:1.5px solid var(--bd);border-radius:10px;padding:10px;text-align:center;font-weight:700;font-size:15px;cursor:pointer;color:var(--m)}
+.vtype.on{background:var(--pb);border-color:var(--p);color:var(--p)}
+.is-acu .vtype.on{background:var(--ab);border-color:var(--a);color:var(--a)}
+.inp{width:100%;padding:12px;border:1.5px solid var(--bd);border-radius:10px;font-size:16px;margin-bottom:14px;background:#fff}
 .main-btn{width:100%;padding:15px;border:none;border-radius:12px;font-size:17px;font-weight:700;color:#fff;background:var(--p);cursor:pointer}
-.is-acu .main-btn{background:var(--a)}.main-btn:disabled{background:#cbd5e1}
+.is-acu .main-btn{background:var(--a)}.main-btn:disabled{background:#d6cfc7;cursor:not-allowed}
 .ok-circle{width:56px;height:56px;background:#dcfce7;color:#15803d;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px;font-weight:700}
-.box-gray{background:#f8fafc;border:1px solid var(--bd);border-radius:12px;padding:14px;margin:16px 0;font-size:15px;line-height:1.8;text-align:left}
+.box-gray{background:#faf9f6;border:1px solid var(--bd);border-radius:12px;padding:14px;margin:16px 0;font-size:15px;line-height:1.8;text-align:left}
 .rec-card{background:var(--c);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;font-size:14px;line-height:1.6;position:relative}
-.del-btn{position:absolute;top:14px;right:14px;background:#fee2e2;color:#b91c1c;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600}
-.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700;margin-right:6px}
-.tag.c{background:var(--pb);color:var(--p)}.tag.a{background:var(--ab);color:var(--a)}
-.tab-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(15,23,42,.92);padding:6px;border-radius:999px;display:flex;gap:6px;z-index:99}
-.tab-btn{background:transparent;border:none;color:#94a3b8;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:700}
-.tab-btn.active{background:#fff;color:#0f172a}
+.del-btn{position:absolute;top:14px;right:14px;background:#fee2e2;color:#b91c1c;border:none;padding:4px 10px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:12px;font-weight:700;margin-right:4px}
+.tag.c{background:var(--pb);color:var(--p)}.tag.a{background:var(--ab);color:var(--a)}.tag.v{background:#efeae4;color:#4a3f37}
+.tab-bar{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:rgba(44,37,32,.92);padding:6px;border-radius:999px;display:flex;gap:6px;z-index:99}
+.tab-btn{background:transparent;border:none;color:#b8aea6;padding:10px 20px;border-radius:999px;font-size:14px;font-weight:700;cursor:pointer}
+.tab-btn.active{background:#fff;color:var(--t)}
 </style>
 </head>
 <body>
-<div class="header">🏥 診所線上預約系統</div>
+<div class="header">
+  <svg width="34" height="34" viewBox="0 0 100 100" fill="none">
+    <circle cx="50" cy="50" r="46" stroke="#8c6239" stroke-width="5"/>
+    <path d="M36 58 A14 14 0 0 1 64 58 Z" fill="#8c6239"/>
+    <rect x="48.5" y="24" width="3" height="12" fill="#8c6239"/>
+    <rect x="31" y="29" width="3" height="12" transform="rotate(-30 31 29)" fill="#8c6239"/>
+    <rect x="20" y="42" width="3" height="11" transform="rotate(-55 20 42)" fill="#8c6239"/>
+    <rect x="78" y="40" width="3" height="11" transform="rotate(55 78 40)" fill="#8c6239"/>
+    <g transform="rotate(32 67 34)">
+      <rect x="65.5" y="23" width="4" height="11" fill="#8c6239"/>
+      <rect x="66.8" y="34" width="1.5" height="9" fill="#8c6239"/>
+    </g>
+    <path d="M12 58 H47 L46 63 H14 Z M53 58 H88 L86 63 H54 Z" fill="#8c6239"/>
+    <path d="M17 67 H45 L44 72 H20 Z M55 67 H83 L80 72 H56 Z" fill="#8c6239"/>
+    <path d="M24 76 H43 L42 81 H30 Z M57 76 H76 L70 81 H58 Z" fill="#8c6239"/>
+  </svg>
+  <span>暖心堂中醫診所</span>
+</div>
 <div class="wrap" id="app-wrap">
   <div id="v-home" class="view active">
     <div class="hero-btn c" onclick="openCal('clinic')">
       <div><div class="hero-title" style="color:var(--p)">1. 一般看診掛號</div><div class="hero-sub">看診日曆 ➔ 選診次 ➔ 輸入資料</div></div>
-      <div style="font-size:22px;color:#94a3b8">➔</div>
+      <div style="font-size:22px;color:#b8aea6">➔</div>
     </div>
     <div class="hero-btn a" onclick="openCal('acu')">
       <div><div class="hero-title" style="color:var(--a)">2. 針灸時段預約</div><div class="hero-sub">針灸日曆 ➔ 選專屬時段 ➔ 輸入資料</div></div>
-      <div style="font-size:22px;color:#94a3b8">➔</div>
+      <div style="font-size:22px;color:#b8aea6">➔</div>
     </div>
   </div>
   <div id="v-cal" class="view">
@@ -60,16 +84,22 @@ body{background:var(--bg);color:var(--t);padding-bottom:90px}
   <div id="v-form" class="view">
     <div class="top-bar"><button class="back-btn" onclick="showView('v-cal')">← 重選時間</button><div class="step-title">輸入預約資料</div></div>
     <div class="card">
-      <div id="banner-time" style="background:#f1f5f9;padding:10px;border-radius:8px;font-size:14px;font-weight:700;margin-bottom:14px"></div>
-      <span class="lbl">姓名 *</span><input type="text" id="f-name" class="inp" placeholder="請輸入姓名">
+      <div id="banner-time" style="background:#f5f1ec;padding:10px;border-radius:8px;font-size:14px;font-weight:700;margin-bottom:14px;color:var(--p)"></div>
+      <span class="lbl">就診身分 *</span>
+      <div class="vtype-box">
+        <div class="vtype on" id="vt-re" onclick="setVt('複診')">複診</div>
+        <div class="vtype" id="vt-first" onclick="setVt('初診')">初診（第一次來院）</div>
+      </div>
+      <span class="lbl">姓名 *</span><input type="text" id="f-name" class="inp" placeholder="請輸入真實姓名">
       <span class="lbl">聯絡電話 *</span><input type="tel" id="f-phone" class="inp" placeholder="請輸入手機號碼">
       <div id="box-note"><span class="lbl">主訴說明（可略過）</span><textarea id="f-note" class="inp" rows="2" placeholder="哪裡不舒服？"></textarea></div>
-      <button class="main-btn" onclick="done()">確認送出</button>
+      <button class="main-btn" onclick="done()">確認送出預約</button>
     </div>
   </div>
   <div id="v-ok" class="view">
     <div class="card" style="text-align:center;padding:26px 18px">
-      <div class="ok-circle">✓</div><h2 id="t-ok" style="font-size:22px;margin-bottom:4px">掛號成功！</h2>
+      <div class="ok-circle">✓</div><h2 id="t-ok" style="font-size:22px;margin-bottom:4px">預約成功！</h2>
+      <p style="font-size:13px;color:var(--m)">暖心堂中醫診所已為您保留時段</p>
       <div class="box-gray" id="ok-detail"></div>
       <button class="main-btn" onclick="switchTab('records')">查看我的預約紀錄</button>
     </div>
@@ -84,15 +114,19 @@ body{background:var(--bg);color:var(--t);padding-bottom:90px}
   <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📋 預約紀錄</button>
 </div>
 <script>
-let cur={type:'',date:'',slot:''};
+const LIMIT_CLINIC=20,LIMIT_ACU=1;
+let cur={type:'',date:'',slot:'',vtype:'複診'};
 const sC=['早診 09:00-12:00','午診 14:30-17:30','晚診 18:30-21:00'],sA=['09:00','09:30','10:00','10:30','14:30','15:00','15:30','16:00','18:30','19:00'];
+function getRs(){return JSON.parse(localStorage.getItem('nxt_records')||'[]')}
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
 function switchTab(t){document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(t==='home'){document.getElementById('tab-home').classList.add('active');showView('v-home')}else{document.getElementById('tab-records').classList.add('active');renderRec();showView('v-records')}}
-function openCal(t){cur={type:t,date:'',slot:''};const w=document.getElementById('app-wrap');w.classList.toggle('is-acu',t==='acu');document.getElementById('t-cal').innerText=t==='acu'?'針灸日曆':'看診日曆';document.getElementById('t-slot').innerText=t==='acu'?'請選擇針灸專屬時段':'請選擇看診診次';document.getElementById('box-slot').style.display='none';document.getElementById('btn-next').disabled=true;const g=document.getElementById('g-date');g.innerHTML='';const ds=['日','一','二','三','四','五','六'];let c=0,o=0;while(c<9){const d=new Date();d.setDate(d.getDate()+o++);if(d.getDay()===0)continue;const l=`${d.getMonth()+1}/${d.getDate()} (${ds[d.getDay()]})`;const b=document.createElement('div');b.className='chip';b.innerText=l;b.onclick=()=>{document.querySelectorAll('#g-date .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');cur.date=l;cur.slot='';document.getElementById('btn-next').disabled=true;const gs=document.getElementById('g-slot');gs.innerHTML='';(cur.type==='acu'?sA:sC).forEach(s=>{const sb=document.createElement('div');sb.className='chip';sb.innerText=s;sb.onclick=()=>{document.querySelectorAll('#g-slot .chip').forEach(x=>x.classList.remove('on'));sb.classList.add('on');cur.slot=s;document.getElementById('btn-next').disabled=false};gs.appendChild(sb)});document.getElementById('box-slot').style.display='block'};g.appendChild(b);c++}showView('v-cal')}
+function setVt(v){cur.vtype=v;document.getElementById('vt-re').classList.toggle('on',v==='複診');document.getElementById('vt-first').classList.toggle('on',v==='初診')}
+function openCal(t){cur={type:t,date:'',slot:'',vtype:'複診'};setVt('複診');const w=document.getElementById('app-wrap');w.classList.toggle('is-acu',t==='acu');document.getElementById('t-cal').innerText=t==='acu'?'針灸日曆':'看診日曆';document.getElementById('t-slot').innerText=t==='acu'?'請選擇針灸專屬時段':'請選擇看診診次';document.getElementById('box-slot').style.display='none';document.getElementById('btn-next').disabled=true;const g=document.getElementById('g-date');g.innerHTML='';const ds=['日','一','二','三','四','五','六'];let c=0,o=0;while(c<9){const d=new Date();d.setDate(d.getDate()+o++);if(d.getDay()===0)continue;const l=`${d.getMonth()+1}/${d.getDate()} (${ds[d.getDay()]})`;const b=document.createElement('div');b.className='chip';b.innerText=l;b.onclick=()=>{document.querySelectorAll('#g-date .chip').forEach(x=>x.classList.remove('on'));b.classList.add('on');cur.date=l;cur.slot='';document.getElementById('btn-next').disabled=true;renderSlots()};g.appendChild(b);c++}showView('v-cal')}
+function renderSlots(){const gs=document.getElementById('g-slot');gs.innerHTML='';const rs=getRs(),lim=cur.type==='acu'?LIMIT_ACU:LIMIT_CLINIC;(cur.type==='acu'?sA:sC).forEach(s=>{const cnt=rs.filter(r=>r.type===cur.type&&r.date===cur.date&&r.slot===s).length;const isFull=cnt>=lim;const sb=document.createElement('div');sb.className='chip'+(isFull?' full':'');sb.innerText=isFull?`${s} (已額滿)`:s;if(!isFull){sb.onclick=()=>{document.querySelectorAll('#g-slot .chip').forEach(x=>x.classList.remove('on'));sb.classList.add('on');cur.slot=s;document.getElementById('btn-next').disabled=false}}gs.appendChild(sb)});document.getElementById('box-slot').style.display='block'}
 function goForm(){if(!cur.date||!cur.slot)return;document.getElementById('banner-time').innerText=`📌 ${cur.type==='acu'?'針灸預約':'一般看診'}｜${cur.date} ${cur.slot}`;document.getElementById('box-note').style.display=cur.type==='acu'?'none':'block';showView('v-form')}
-function done(){const n=document.getElementById('f-name').value.trim(),p=document.getElementById('f-phone').value.trim(),nt=document.getElementById('f-note').value.trim();if(!n||!p)return alert('請填寫姓名與聯絡電話');const r={id:Date.now(),type:cur.type,tn:cur.type==='acu'?'針灸時段預約':'一般看診掛號',date:cur.date,slot:cur.slot,name:n,phone:p,note:cur.type==='acu'?'':nt};const rs=JSON.parse(localStorage.getItem('clinic_records')||'[]');rs.unshift(r);localStorage.setItem('clinic_records',JSON.stringify(rs));document.getElementById('t-ok').innerText=cur.type==='acu'?'針灸預約成功！':'看診掛號成功！';document.getElementById('ok-detail').innerHTML=`<div><b>項目：</b>${r.tn}</div><div><b>時間：</b>${r.date} ${r.slot}</div><div><b>姓名：</b>${r.name}</div><div><b>電話：</b>${r.phone}</div>${r.note?`<div><b>主訴：</b>${r.note}</div>`:''}`;document.getElementById('f-name').value='';document.getElementById('f-phone').value='';document.getElementById('f-note').value='';showView('v-ok')}
-function renderRec(){const el=document.getElementById('list-rec'),rs=JSON.parse(localStorage.getItem('clinic_records')||'[]');if(!rs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--m);padding:30px">目前尚無任何預約紀錄</div>';return}el.innerHTML=rs.map(r=>`<div class="rec-card"><button class="del-btn" onclick="delRec(${r.id})">取消</button><div style="margin-bottom:6px"><span class="tag ${r.type==='acu'?'a':'c'}">${r.tn}</span><b>${r.date} ${r.slot}</b></div><div>預約人：${r.name}（${r.phone}）</div>${r.note?`<div style="color:var(--m);font-size:13px;margin-top:4px">主訴：${r.note}</div>`:''}</div>`).join('')}
-function delRec(id){if(!confirm('確定要取消這筆預約嗎？'))return;localStorage.setItem('clinic_records',JSON.stringify(JSON.parse(localStorage.getItem('clinic_records')||'[]').filter(r=>r.id!==id)));renderRec()}
+function done(){const n=document.getElementById('f-name').value.trim(),p=document.getElementById('f-phone').value.trim(),nt=document.getElementById('f-note').value.trim();if(!n||!p)return alert('請填寫姓名與聯絡電話');const r={id:Date.now(),type:cur.type,tn:cur.type==='acu'?'針灸時段預約':'一般看診掛號',vtype:cur.vtype,date:cur.date,slot:cur.slot,name:n,phone:p,note:cur.type==='acu'?'':nt};const rs=getRs();rs.unshift(r);localStorage.setItem('nxt_records',JSON.stringify(rs));document.getElementById('t-ok').innerText=cur.type==='acu'?'針灸預約成功！':'看診掛號成功！';document.getElementById('ok-detail').innerHTML=`<div><b>診所：</b>暖心堂中醫診所</div><div><b>項目：</b>${r.tn}（${r.vtype}）</div><div><b>時間：</b>${r.date} ${r.slot}</div><div><b>姓名：</b>${r.name}</div><div><b>電話：</b>${r.phone}</div>${r.note?`<div><b>主訴：</b>${r.note}</div>`:''}`;document.getElementById('f-name').value='';document.getElementById('f-phone').value='';document.getElementById('f-note').value='';showView('v-ok')}
+function renderRec(){const el=document.getElementById('list-rec'),rs=getRs();if(!rs.length){el.innerHTML='<div class="card" style="text-align:center;color:var(--m);padding:30px">目前尚無任何預約紀錄</div>';return}el.innerHTML=rs.map(r=>`<div class="rec-card"><button class="del-btn" onclick="delRec(${r.id})">取消</button><div style="margin-bottom:6px"><span class="tag ${r.type==='acu'?'a':'c'}">${r.tn}</span><span class="tag v">${r.vtype||'複診'}</span><b>${r.date} ${r.slot}</b></div><div>預約人：${r.name}（${r.phone}）</div>${r.note?`<div style="color:var(--m);font-size:13px;margin-top:4px">主訴：${r.note}</div>`:''}</div>`).join('')}
+function delRec(id){if(!confirm('確定要取消這筆預約嗎？'))return;localStorage.setItem('nxt_records',JSON.stringify(getRs().filter(r=>r.id!==id)));renderRec()}
 </script>
 </body>
 </html>
