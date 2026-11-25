@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="診所掛號">
+<title>診所看診與針灸預約</title>
+<style>
+  :root {
+    --primary: #1d4ed8; --primary-bg: #eff6ff;
+    --acu: #047857; --acu-bg: #ecfdf5;
+    --bg: #f8fafc; --card: #ffffff; --text: #0f172a; --muted: #64748b; --border: #e2e8f0;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang TC", sans-serif; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+  .header { background: var(--card); padding: 16px; text-align: center; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 10; font-size: 18px; font-weight: 700; }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 18px; }
+  .view { display: none; }
+  .view.active { display: block; animation: fade 0.2s; }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+  /* 首頁卡片 */
+  .hero-btn { background: var(--card); border: 1.5px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+  .hero-btn:active { transform: scale(0.98); }
+  .hero-btn.c { border-left: 6px solid var(--primary); }
+  .hero-btn.a { border-left: 6px solid var(--acu); }
+  .hero-title { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .hero-sub { font-size: 13px; color: var(--muted); }
+
+  /* 步驟卡片 */
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 14px; }
+  .top-bar { display: flex; align-items: center; margin-bottom: 14px; }
+  .back-btn { background: #e2e8f0; border: none; padding: 7px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #334155; }
+  .step-title { font-size: 18px; font-weight: 700; margin-left: 10px; }
+  .lbl { font-size: 14px; font-weight: 700; margin-bottom: 10px; display: block; color: #334155; }
+
+  /* 日期與時段 */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .chip { background: #fff; border: 1.5px solid var(--border); border-radius: 12px; padding: 12px 6px; text-align: center; font-size: 15px; font-weight: 600; cursor: pointer; }
+  .chip.on { background: var(--primary-bg); border-color: var(--primary); color: var(--primary); }
+  .is-acu .chip.on { background: var(--acu-bg); border-color: var(--acu); color: var(--acu); }
+
+  /* 輸入框 */
+  .inp { width: 100%; padding: 13px; border: 1.5px solid var(--border); border-radius: 10px; font-size: 16px; margin-bottom: 14px; }
+  .opt { font-size: 12px; background: #f1f5f9; color: #64748b; padding: 2px 6px; border-radius: 4px; font-weight: normal; }
+  .main-btn { width: 100%; padding: 15px; border: none; border-radius: 12px; font-size: 17px; font-weight: 700; color: #fff; background: var(--primary); cursor: pointer; }
+  .is-acu .main-btn { background: var(--acu); }
+  .main-btn:disabled { background: #cbd5e1; }
+
+  /* 成功與紀錄 */
+  .ok-circle { width: 56px; height: 56px; background: #dcfce7; color: #15803d; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px; font-weight: bold; }
+  .box-gray { background: #f8fafc; border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin: 16px 0; font-size: 15px; line-height: 1.8; text-align: left; }
+  .rec-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 10px; font-size: 14px; line-height: 1.6; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; margin-right: 6px; }
+  .tag.c { background: var(--primary-bg); color: var(--primary); }
+  .tag.a { background: var(--acu-bg); color: var(--acu); }
+
+  /* 底部膠囊導覽列 */
+  .tab-bar { position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(8px); padding: 6px; border-radius: 999px; display: flex; gap: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.2); z-index: 99; }
+  .tab-btn { background: transparent; border: none; color: #94a3b8; padding: 10px 20px; border-radius: 999px; font-size: 14px; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .tab-btn.active { background: #ffffff; color: #0f172a; }
+</style>
+</head>
+<body>
+
+<div class="header">🏥 診所線上預約系統</div>
+
+<div class="wrap" id="app-wrap">
+  <!-- 分頁1：首頁 -->
+  <div id="v-home" class="view active">
+    <div class="hero-btn c" onclick="openCal('clinic')">
+      <div>
+        <div class="hero-title" style="color:var(--primary)">1. 一般看診掛號</div>
+        <div class="hero-sub">看診日曆 ➔ 選診次 ➔ 輸入資料</div>
+      </div>
+      <div style="font-size:22px;color:#94a3b8">➔</div>
+    </div>
+
+    <div class="hero-btn a" onclick="openCal('acu')">
+      <div>
+        <div class="hero-title" style="color:var(--acu)">2. 針灸時段預約</div>
+        <div class="hero-sub">針灸日曆 ➔ 選專屬時段 ➔ 輸入資料</div>
+      </div>
+      <div style="font-size:22px;color:#94a3b8">➔</div>
+    </div>
+  </div>
+
+  <!-- 步驟：選日曆與時段 -->
+  <div id="v-cal" class="view">
+    <div class="top-bar">
+      <button class="back-btn" onclick="switchTab('home')">← 返回</button>
+      <div class="step-title" id="t-cal">看診日曆</div>
+    </div>
+    <div class="card">
+      <span class="lbl">請點選預約日期</span>
+      <div class="grid-3" id="g-date"></div>
+    </div>
+    <div class="card" id="box-slot" style="display:none">
+      <span class="lbl" id="t-slot">請選擇時段</span>
+      <div class="grid-2" id="g-slot"></div>
+    </div>
+    <button class="main-btn" id="btn-next" disabled onclick="goForm()">下一步：輸入資料</button>
+  </div>
+
+  <!-- 步驟：輸入資料 -->
+  <div id="v-form" class="view">
+    <div class="top-bar">
+      <button class="back-btn" onclick="showView('v-cal')">← 重選時間</button>
+      <div class="step-title">輸入預約資料</div>
+    </div>
+    <div class="card">
+      <div id="banner-time" style="background:#f1f5f9;padding:10px;border-radius:8px;font-size:14px;font-weight:700;margin-bottom:14px;"></div>
+      <span class="lbl">姓名 *</span>
+      <input type="text" id="f-name" class="inp" placeholder="請輸入姓名">
+      <span class="lbl">聯絡電話 *</span>
+      <input type="tel" id="f-phone" class="inp" placeholder="請輸入手機號碼">
+      <div id="box-note">
+        <span class="lbl">主訴說明 <span class="opt">可略過</span></span>
+        <textarea id="f-note" class="inp" rows="3" placeholder="哪裡不舒服？（可直接略過不填）"></textarea>
+      </div>
+      <button class="main-btn" onclick="done()">確認送出</button>
+    </div>
+  </div>
+
+  <!-- 步驟：成功 -->
+  <div id="v-ok" class="view">
+    <div class="card" style="text-align:center;padding:26px 18px;">
+      <div class="ok-circle">✓</div>
+      <h2 id="t-ok" style="font-size:22px;margin-bottom:4px;">掛號成功！</h2>
+      <p style="font-size:13px;color:var(--muted)">已為您保留時段，請準時報到</p>
+      <div class="box-gray" id="ok-detail"></div>
+      <button class="main-btn" onclick="switchTab('records')">查看我的預約紀錄</button>
+    </div>
+  </div>
+
+  <!-- 分頁2：預約紀錄 -->
+  <div id="v-records" class="view">
+    <div class="step-title" style="margin:0 0 14px 0;">📋 我的預約紀錄</div>
+    <div id="list-rec"></div>
+  </div>
+</div>
+
+<!-- 底部膠囊導覽列 -->
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-home" onclick="switchTab('home')">📅 線上預約</button>
+  <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📋 預約紀錄</button>
+</div>
+
+<script>
+  let cur = { type: '', date: '', slot: '' };
+  const sClinic = ['早診 09:00-12:00', '午診 14:30-17:30', '晚診 18:30-21:00'];
+  const sAcu = ['09:00', '09:30', '10:00', '10:30', '14:30', '15:00', '15:30', '16:00', '18:30', '19:00'];
+
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+  }
+
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'home') showView('v-home');
+    if (tab === 'records') { renderRec(); showView('v-records'); }
+  }
+
+  function openCal(type) {
+    cur = { type, date: '', slot: '' };
+    const wrap = document.getElementById('app-wrap');
+    if (type === 'acu') {
+      wrap.classList.add('is-acu');
+      document.getElementById('t-cal').innerText = '針灸時段日曆';
+      document.getElementById('box-note').style.display = 'none';
+    } else {
+      wrap.classList.remove('is-acu');
+      document.getElementById('t-cal').innerText = '看診日曆';
+      document.getElementById('box-note').style.display = 'block';
+    }
+    document.getElementById('box-slot').style.display = 'none';
+    document.getElementById('btn-next').disabled = true;
+    const gd = document.getElementById('g-date');
+    gd.innerHTML = '';
+    const wk = ['日','一','二','三','四','五','六'];
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(); d.setDate(d.getDate() + i);
+      const str = `${d.getMonth()+1}/${d.getDate()}`;
+      const w = i === 0 ? '今天' : '週' + wk[d.getDay()];
+      const el = document.createElement('div');
+      el.className = 'chip';
+      el.innerHTML = `${str}<br><span style="font-size:12px;font-weight:normal">${w}</span>`;
+      el.onclick = () => {
+        gd.querySelectorAll('.chip').forEach(c => c.classList.remove('on'));
+        el.classList.add('on');
+        cur.date = `${str} (${w})`; cur.slot = '';
+        document.getElementById('btn-next').disabled = true;
+        renderSlots();
+      };
+      gd.appendChild(el);
+    }
+    showView('v-cal');
+  }
+
+  function renderSlots() {
