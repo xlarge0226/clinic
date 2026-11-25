@@ -11,11 +11,8 @@
 <style>
 :root{--p:#8c6239;--pb:#fdf8f3;--a:#2e6f40;--ab:#f2f9f4;--bg:#faf9f6;--c:#fff;--t:#2c2520;--m:#786c63;--bd:#e6dfd7}
 *{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--t);padding-bottom:40px}
-.header{background:var(--c);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--bd);font-size:18px;font-weight:700;color:var(--p)}
-.top-tabs{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.95);backdrop-filter:blur(8px);display:flex;border-bottom:1px solid var(--bd);padding:0 10px;overflow-x:auto}
-.tab-btn{flex:1;background:transparent;border:none;border-bottom:3px solid transparent;color:var(--m);padding:12px 8px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s}
-.tab-btn.active{color:var(--p);border-bottom-color:var(--p)}
+body{background:var(--bg);color:var(--t);padding-bottom:95px}
+.header{background:var(--c);padding:12px 16px;display:flex;align-items:center;justify-content:center;gap:10px;border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:10;font-size:18px;font-weight:700;color:var(--p)}
 .wrap{max-width:480px;margin:0 auto;padding:18px}
 .view{display:none}.view.active{display:block}
 .hero-btn{background:var(--c);border:1.5px solid var(--bd);border-radius:16px;padding:22px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(140,98,57,.05)}
@@ -55,6 +52,9 @@ body{background:var(--bg);color:var(--t);padding-bottom:40px}
 .srv-item{padding:10px 0;border-bottom:1px solid var(--bd);font-size:14px;line-height:1.65}
 .srv-item:last-child{border-bottom:none;padding-bottom:0}
 .srv-cat{font-weight:700;color:var(--a);font-size:15px;margin-bottom:3px}
+.tab-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:rgba(44,37,32,.95);backdrop-filter:blur(8px);padding:5px;border-radius:999px;display:flex;gap:4px;z-index:99;box-shadow:0 6px 18px rgba(0,0,0,.22)}
+.tab-btn{background:transparent;border:none;color:#b8aea6;padding:9px 14px;border-radius:999px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.tab-btn.active{background:#fff;color:var(--t)}
 </style>
 </head>
 <body>
@@ -117,8 +117,12 @@ body{background:var(--bg);color:var(--t);padding-bottom:40px}
     </div>
   </div>
   <div id="v-info" class="view">
-    <div class="step-title" style="margin:0 0 14px 0">👨‍⚕️ 醫師介紹與看診項目</div>
-    <div class="card">
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="kw-search" class="search-inp" placeholder="搜尋症狀或治療項目（如：失眠、減重、五十肩）" oninput="filterInfo()">
+    </div>
+    <div id="no-match" style="display:none;text-align:center;color:var(--m);padding:24px;font-size:14px">找不到相符的項目，請嘗試其他關鍵字</div>
+    <div class="card filter-card" id="card-doc">
       <div class="doc-head">
         <div class="doc-av">唐</div>
         <div>
@@ -140,21 +144,21 @@ body{background:var(--bg);color:var(--t);padding-bottom:40px}
         <li>台灣顏面針灸醫學會美顏針專科醫師</li>
       </ul>
     </div>
-    <div class="card">
+    <div class="card filter-card" id="card-srv">
       <div class="sec-bar" style="margin-top:0">主治專長與看診項目</div>
-      <div class="srv-item">
+      <div class="srv-item filter-item">
         <div class="srv-cat">針灸科</div>
         <div>運動傷害、扭挫傷、肩頸腰背痛、五十肩、網球肘、板機指、坐骨神經痛、顏面神經麻痺、腦中風後遺症、老年退化性疾患、乾眼症</div>
       </div>
-      <div class="srv-item">
+      <div class="srv-item filter-item">
         <div class="srv-cat">內科</div>
         <div>感冒、頭痛、過敏性鼻炎、青春痘、皮膚疾患、失眠、胃食道逆流、便秘、慢性腎臟病、高血脂、高血壓、糖尿病、骨科術後調理、體質調理、轉骨調理</div>
       </div>
-      <div class="srv-item">
+      <div class="srv-item filter-item">
         <div class="srv-cat">婦科</div>
         <div>月經調理、不孕症調理、更年期調理</div>
       </div>
-      <div class="srv-item">
+      <div class="srv-item filter-item">
         <div class="srv-cat">特殊治療</div>
         <div>小針刀、眼針、減重、美顏針</div>
       </div>
@@ -169,7 +173,7 @@ body{background:var(--bg);color:var(--t);padding-bottom:40px}
 <div class="tab-bar">
   <button class="tab-btn active" id="tab-home" onclick="switchTab('home')">📅 線上預約</button>
   <button class="tab-btn" id="tab-info" onclick="switchTab('info')">👨‍⚕️ 醫師項目</button>
-  <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📋 預約紀錄</button>
+  <button class="tab-btn" id="tab-records" onclick="switchTab('records')">📋 我的預約</button>
 </div>
 <script>
 (function(){
